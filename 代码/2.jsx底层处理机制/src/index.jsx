@@ -1,8 +1,7 @@
-
-
 import React from "react";
 import ReactDOM from "react-dom/client";
 
+import { createElement } from "./jsxHandle";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -53,6 +52,7 @@ root.render(
           按钮{index + 1}
         </button>
       })}
+      {createElement('button',null)}
   </>
 );
 
