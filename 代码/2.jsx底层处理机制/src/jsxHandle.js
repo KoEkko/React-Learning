@@ -57,3 +57,46 @@ export function createElement(ele, props, ...children) {
   if (len > 1) virtualDOM.props.children = children;
   return virtualDOM;
 }
+
+
+export function render(virtualDOM, container) {
+  let { type, props } = virtualDOM
+
+  if(typeof type === 'string') {
+    // 存储的是标签名：动态创建这个标签
+    const ele = document.createElement(type)
+
+    // 给标签添加属性
+    each(props, (value, key) => {
+
+      // 如果属性是className
+      if(key === 'className') {
+        ele.className = value
+        return
+      }
+      // 如果属性是style
+      if(key === 'style') {
+        each(value, (val, attr) => {
+          ele.style[attr] = val
+        })
+        return
+      }
+      // 如果属性是children
+      if(key === 'children') {
+        // 有children属性说明至少有一个，为了方便处理，我们需要对数据进行一步处理
+        let children = value
+        if( !Array.isArray(children)) children = [children]
+        children.forEach(child => {
+          if(typeof child === 'string') {
+            ele.appendChild(document.createTextNode(child))
+            return
+          } else {
+            render(child, ele)
+          } 
+        })
+      }
+      ele.setAttribute(key, value)
+    })
+    container.appendChild(ele)
+  }
+}
